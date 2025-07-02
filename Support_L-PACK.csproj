@@ -118,6 +118,7 @@
     <Compile Include="Factory\BlackCartridgeCreator.cs" />
     <Compile Include="Factory\CartridgeCreator.cs" />
     <Compile Include="Factory\ColorCartridgeCreator.cs" />
+    <Compile Include="Halpers\DBConnection.cs" />
     <Compile Include="Halpers\RelayCommand.cs" />
     <Compile Include="Models\BlackCartridge.cs" />
     <Compile Include="Models\ColorCartridge.cs" />
