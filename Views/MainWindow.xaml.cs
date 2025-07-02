@@ -25,8 +25,10 @@ namespace Support_L_PACK
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
-            this.Loaded += Window_Loaded;
+            var vm = new MainViewModel();
+            DataContext = vm;
+            Loaded += async (s, e) => await Task.Run(() => vm.InitDbCommand.Execute(null));
+
         }
     }
 }

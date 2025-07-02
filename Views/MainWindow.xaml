@@ -24,7 +24,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button Content="Добавить картридж" Click="AddCartridgeButton_Click" Margin="5"/>
+            <Button Content="Добавить картридж в БД" Command="{Binding AddToDbCommand}" Margin="5"/>
         </StackPanel>
     </Grid>
 </Window>

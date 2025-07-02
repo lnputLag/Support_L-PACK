@@ -34,6 +34,8 @@ namespace Support_L_PACK.ViewModels
         /// </summary>
         public ICommand AddBlackCommand { get; }
         public ICommand AddColorCommand { get; }
+        public ICommand InitDbCommand { get; }
+        public ICommand AddToDbCommand { get; }
 
         /// <summary>
         /// Конструктор, в котором задаётся логика для кнопок.
@@ -54,9 +56,12 @@ namespace Support_L_PACK.ViewModels
                 var cartridge = creator.Create(InputModel);
                 Cartridges.Add(cartridge);
             });
+
+            InitDbCommand = new RelayCommand(async _ => await InitDbAsync());
+            AddToDbCommand = new RelayCommand(async _ => await AddToDbAsync());
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private async Task InitDbAsync()
         {
             try
             {
@@ -68,31 +73,27 @@ namespace Support_L_PACK.ViewModels
             }
         }
 
-        private async void AddCartridgeButton_Click(object sender, RoutedEventArgs e)
+        private async Task AddToDbAsync()
         {
-            string model = CartridgeModelTextBox.Text.Trim();
-            if (!int.TryParse(CartridgeModelTextBox.Text.Trim(), out int quantity))
-            {
-                MessageBox.Show("Введите корректное количество картриджей.");
-                return;
-            }
-
+            string model = InputModel?.Trim();
             if (string.IsNullOrWhiteSpace(model))
             {
                 MessageBox.Show("Введите модель картриджа.");
                 return;
             }
 
+            int quantity = 1; // временно — ты пока не указал отдельное поле Quantity
+
             try
             {
                 string query = "INSERT INTO cartridges (model, quantity) VALUES (@model, @quantity)";
                 MySqlParameter[] parameters = new MySqlParameter[]
                 {
-                    new MySqlParameter("@model", model),
-                    new MySqlParameter("@quantity", quantity)
+            new MySqlParameter("@model", model),
+            new MySqlParameter("@quantity", quantity)
                 };
 
-                int rowsAffected = await DBConnection.ExecuteNonQueryAsync(query, parameters); // предполагаем, что методы находятся в классе DbHelper
+                int rowsAffected = await DBConnection.ExecuteNonQueryAsync(query, parameters);
 
                 if (rowsAffected > 0)
                 {
@@ -108,5 +109,58 @@ namespace Support_L_PACK.ViewModels
                 MessageBox.Show("Ошибка: " + ex.Message);
             }
         }
+
+        //private async void Window_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        await DBConnection.InitAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Ошибка при инициализации базы данных: " + ex.Message);
+        //    }
+        //}
+
+        //private async void AddCartridgeButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    string model = CartridgeModelTextBox.Text.Trim();
+        //    if (!int.TryParse(CartridgeModelTextBox.Text.Trim(), out int quantity))
+        //    {
+        //        MessageBox.Show("Введите корректное количество картриджей.");
+        //        return;
+        //    }
+
+        //    if (string.IsNullOrWhiteSpace(model))
+        //    {
+        //        MessageBox.Show("Введите модель картриджа.");
+        //        return;
+        //    }
+
+        //    try
+        //    {
+        //        string query = "INSERT INTO cartridges (model, quantity) VALUES (@model, @quantity)";
+        //        MySqlParameter[] parameters = new MySqlParameter[]
+        //        {
+        //            new MySqlParameter("@model", model),
+        //            new MySqlParameter("@quantity", quantity)
+        //        };
+
+        //        int rowsAffected = await DBConnection.ExecuteNonQueryAsync(query, parameters); // предполагаем, что методы находятся в классе DbHelper
+
+        //        if (rowsAffected > 0)
+        //        {
+        //            MessageBox.Show("Картридж добавлен.");
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Не удалось добавить картридж.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Ошибка: " + ex.Message);
+        //    }
+        //}
     }
 }
