@@ -6,7 +6,24 @@
         xmlns:local="clr-namespace:Support_L_PACK"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+    <Grid Margin="10">
+        <StackPanel>
+            <TextBox Width="200" Margin="5" 
+                     Text="{Binding InputModel, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Добавить чёрно-белый картридж" 
+                        Command="{Binding AddBlackCommand}" Margin="5"/>
+                <Button Content="Добавить цветной картридж"
+                        Command="{Binding AddColorCommand}" Margin="5"/>
+            </StackPanel>
+
+            <ListBox ItemsSource="{Binding Cartridges}" Height="100">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Info}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
     </Grid>
 </Window>
