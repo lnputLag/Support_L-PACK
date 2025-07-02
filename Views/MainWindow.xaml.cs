@@ -1,4 +1,5 @@
-﻿using Support_L_PACK.ViewModels;
+﻿using Support_L_PACK.Halpers;
+using Support_L_PACK.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace Support_L_PACK
         {
             InitializeComponent();
             DataContext = new MainViewModel();
+            this.Loaded += Window_Loaded;
         }
     }
 }

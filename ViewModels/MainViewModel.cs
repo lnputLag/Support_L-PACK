@@ -1,4 +1,5 @@
-﻿using Support_L_PACK.Factory;
+﻿using MySql.Data.MySqlClient;
+using Support_L_PACK.Factory;
 using Support_L_PACK.Halpers;
 using Support_L_PACK.Models;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Support_L_PACK.ViewModels
@@ -52,6 +54,59 @@ namespace Support_L_PACK.ViewModels
                 var cartridge = creator.Create(InputModel);
                 Cartridges.Add(cartridge);
             });
+        }
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await DBConnection.InitAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при инициализации базы данных: " + ex.Message);
+            }
+        }
+
+        private async void AddCartridgeButton_Click(object sender, RoutedEventArgs e)
+        {
+            string model = CartridgeModelTextBox.Text.Trim();
+            if (!int.TryParse(CartridgeModelTextBox.Text.Trim(), out int quantity))
+            {
+                MessageBox.Show("Введите корректное количество картриджей.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(model))
+            {
+                MessageBox.Show("Введите модель картриджа.");
+                return;
+            }
+
+            try
+            {
+                string query = "INSERT INTO cartridges (model, quantity) VALUES (@model, @quantity)";
+                MySqlParameter[] parameters = new MySqlParameter[]
+                {
+                    new MySqlParameter("@model", model),
+                    new MySqlParameter("@quantity", quantity)
+                };
+
+                int rowsAffected = await DBConnection.ExecuteNonQueryAsync(query, parameters); // предполагаем, что методы находятся в классе DbHelper
+
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Картридж добавлен.");
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось добавить картридж.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
         }
     }
 }
